@@ -38,6 +38,10 @@ export async function POST(request: NextRequest) {
 			createdat: new Date(),
 		});
 
+		if (!process.env.JWT_SECRET) {
+			throw new Error("JWT_SECRET is not defined in the environment variables.");
+		}
+
 		const token = jwt.sign(payload, process.env.JWT_SECRET!);
 
 		return NextResponse.json({ token }, { status: 200 });
