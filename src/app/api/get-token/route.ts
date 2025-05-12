@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { nonceCollection } from "@/utils/db.connect";
 
-export async function POST(request: NextRequest, response: NextResponse) {
+export async function POST(request: NextRequest) {
 	try {
 		if (!request.body) {
 			return NextResponse.json({ error: "No data provided" }, { status: 400 });
