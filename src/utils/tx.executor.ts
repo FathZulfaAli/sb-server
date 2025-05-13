@@ -33,12 +33,12 @@ export async function txExecutor(destination: string, amount: number) {
 
 	const signedTransaction = await signTransactionMessageWithSigners(tx);
 
-	const explolerLink = getExplorerLink({
+	const explorerLink = getExplorerLink({
 		cluster: "devnet",
 		transaction: getSignatureFromTransaction(signedTransaction),
 	});
 
 	const confirmation = await sendAndConfirmTransaction(signedTransaction);
 
-	return { signedTransaction, explolerLink, confirmation };
+	return { signedTransaction, explorerLink, confirmation };
 }
