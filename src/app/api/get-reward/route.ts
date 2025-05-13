@@ -12,17 +12,16 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
 		}
 
-		const { playerPubKey, token } = body;
+		const { wallet, token } = body;
 
-		if (!playerPubKey || !token)
-			return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+		if (!wallet || !token) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
 
 		const decoded = await jwtVerifier(token);
 
 		if (typeof decoded === "string")
 			return NextResponse.json({ error: "Invalid token" }, { status: 400 });
 
-		if (decoded.wallet !== playerPubKey)
+		if (decoded.wallet !== wallet)
 			return NextResponse.json({ error: "Invalid wallet" }, { status: 400 });
 
 		const nonce = await nonceCollection.findOne({ wallet: decoded.wallet });
@@ -34,8 +33,6 @@ export async function POST(request: NextRequest) {
 				{ error: "no no no this token has beed used" },
 				{ status: 400 }
 			);
-
-		console.log("Nonce:", nonce);
 
 		if (nonce.status === "completed")
 			return NextResponse.json({ error: "No no no invalid token" }, { status: 400 });

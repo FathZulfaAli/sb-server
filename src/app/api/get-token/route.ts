@@ -1,42 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { nonceCollection } from "@/utils/db.connect";
+import { nonceCollection, usersData } from "@/utils/db.connect";
 
 export async function POST(request: NextRequest) {
 	try {
-		if (!request.body) {
-			return NextResponse.json({ error: "No data provided" }, { status: 400 });
+		let body;
+		try {
+			body = await request.json();
+		} catch {
+			return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
 		}
-		const body = await request.json();
 
-		const { wallet, action } = body;
+		const { wallet, action, matchPlayed, matchWin, winStreak } = body;
 
-		const rewardMapping: Record<string, number> = {
-			ttt_w: 500_000_000,
-			ttt_ws2: 750_000_000,
-			ttt_ws3: 1_000_000_000,
-			ttt_ws4: 2_000_000_000,
-			ttt_ws5: 3_000_000_000,
-		};
-
-		if (!wallet || !(action in rewardMapping))
-			return NextResponse.json({ error: "Invalid data" }, { status: 400 });
-
-		const rewardAmount = rewardMapping[action];
+		const reward = winRewardCounter(matchWin, winStreak);
 
 		const payload = {
 			wallet,
 			rewardMap: action,
-			rewardAmount,
+			reward,
 			nonce: Math.random().toString(36).substring(2, 10),
 		};
 
 		await nonceCollection.insertOne({
 			wallet: wallet,
-			amount: rewardAmount,
+			amount: reward,
 			nonce: payload.nonce,
 			createdat: new Date(),
 		});
+
+		const userdata = await usersData.findOne({ wallet });
+
+		let highestWinStreak;
+
+		if (winStreak > userdata?.ttt.highestWinStreak) {
+			highestWinStreak = winStreak;
+		} else {
+			highestWinStreak = userdata?.ttt.highestWinStreak;
+		}
+
+		await usersData.updateOne(
+			{ wallet: wallet },
+			{
+				$set: {
+					ttt: {
+						matchPlayed: matchPlayed + userdata?.ttt.matchPlayed,
+						matchWin: matchWin + userdata?.ttt.matchWin,
+						highestWinStreak: highestWinStreak,
+					},
+				},
+			}
+		);
 
 		if (!process.env.JWT_SECRET) {
 			throw new Error("JWT_SECRET is not defined in the environment variables.");
