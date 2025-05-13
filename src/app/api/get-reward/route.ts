@@ -29,6 +29,12 @@ export async function POST(request: NextRequest) {
 
 		if (!nonce) return NextResponse.json({ error: "No no no" }, { status: 400 });
 
+		if (nonce.nonce !== decoded.nonce)
+			return NextResponse.json(
+				{ error: "no no no this token has beed used" },
+				{ status: 400 }
+			);
+
 		console.log("Nonce:", nonce);
 
 		if (nonce.status === "completed")
