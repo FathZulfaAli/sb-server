@@ -24,7 +24,7 @@ export async function txExecutor(destination: string, amount: number) {
 		feePayer: signer,
 		version: "legacy",
 		latestBlockhash,
-		amount: amount,
+		amount: BigInt(Number(amount)),
 		authority: signer,
 		destination: address(destination),
 		mint,
