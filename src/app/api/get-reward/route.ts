@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 		if (nonce.status === "completed")
 			return NextResponse.json({ error: "No no no invalid token" }, { status: 400 });
 
-		const tx = await txExecutor(decoded.wallet, decoded.rewardAmount);
+		const tx = await txExecutor(decoded.wallet, decoded.reward);
 
 		await nonceCollection.updateOne(
 			{ nonce: decoded.nonce },

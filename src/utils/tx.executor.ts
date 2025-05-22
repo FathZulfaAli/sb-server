@@ -1,3 +1,4 @@
+import { log } from "console";
 import {
 	address,
 	createSolanaClient,
@@ -8,7 +9,7 @@ import {
 import { loadKeypairSignerFromEnvironment } from "gill/node";
 import { buildTransferTokensTransaction, TOKEN_PROGRAM_ADDRESS } from "gill/programs/token";
 
-export async function txExecutor(destination: string, amount: number) {
+export async function txExecutor(destination: string, amount: bigint) {
 	const signer = await loadKeypairSignerFromEnvironment("SIGNER");
 
 	const { rpc, sendAndConfirmTransaction } = createSolanaClient({
