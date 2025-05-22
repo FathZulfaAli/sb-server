@@ -1,7 +1,7 @@
 import { usersData } from "@/utils/db.connect";
 import { NextRequest, NextResponse } from "next/server";
 
-export default async function POST(request: NextRequest) {
+export async function POST(request: NextRequest) {
 	try {
 		let body;
 		try {

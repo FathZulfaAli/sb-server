@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { nonceCollection, usersData } from "@/utils/db.connect";
+import { winRewardCounter } from "@/utils/win.counter";
 
 export async function POST(request: NextRequest) {
 	try {
