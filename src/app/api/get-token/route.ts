@@ -27,6 +27,7 @@ export async function POST(request: NextRequest) {
 			wallet: wallet,
 			amount: reward,
 			nonce: payload.nonce,
+			status: "pending",
 			createdat: new Date(),
 		});
 

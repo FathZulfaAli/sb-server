@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 		if (decoded.wallet !== wallet)
 			return NextResponse.json({ error: "Invalid wallet" }, { status: 400 });
 
-		const nonce = await nonceCollection.findOne({ wallet: decoded.wallet });
+		const nonce = await nonceCollection.findOne({ nonce: decoded.nonce });
 
 		if (!nonce) return NextResponse.json({ error: "No no no" }, { status: 400 });
 
