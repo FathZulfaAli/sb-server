@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "http://localhost:3000"
+          "value": "https://starborn-gallant-v1.vercel.app"
         },
         {
           "key": "Access-Control-Allow-Methods",
