@@ -12,13 +12,12 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
 		}
 
-		const { wallet, action, matchPlayed, matchWin, winStreak } = body;
+		const { wallet, game, matchPlayed, matchWin, winStreak } = body;
 
 		const reward = winRewardCounter(matchWin, winStreak);
 
 		const payload = {
 			wallet,
-			rewardMap: action,
 			reward,
 			nonce: Math.random().toString(36).substring(2, 10),
 		};
@@ -31,25 +30,17 @@ export async function POST(request: NextRequest) {
 			createdat: new Date(),
 		});
 
-		const userdata = await usersData.findOne({ wallet });
-
-		let highestWinStreak;
-
-		if (winStreak > userdata?.ttt.highestWinStreak) {
-			highestWinStreak = winStreak;
-		} else {
-			highestWinStreak = userdata?.ttt.highestWinStreak;
-		}
-
 		await usersData.updateOne(
-			{ wallet: wallet },
+			{ wallet },
 			{
-				$set: {
-					ttt: {
-						matchPlayed: matchPlayed + userdata?.ttt.matchPlayed,
-						matchWin: matchWin + userdata?.ttt.matchWin,
-						highestWinStreak: highestWinStreak,
-					},
+				$set: { updatedAt: new Date() },
+				$inc: {
+					[`${game}.matchPlayed`]: matchPlayed,
+					[`${game}.matchWin`]: matchWin,
+					totalNblrMinted: reward,
+				},
+				$max: {
+					[`${game}.highestWinStreak`]: winStreak,
 				},
 			}
 		);

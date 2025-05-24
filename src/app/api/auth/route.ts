@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 		const userdata = await usersData.findOne({ wallet });
 
 		if (userdata) {
-			return NextResponse.json(userdata, { status: 200 });
+			return NextResponse.json({ action: "login", userdata }, { status: 200 });
 		}
 
 		await usersData.insertOne({
@@ -34,9 +34,12 @@ export async function POST(request: NextRequest) {
 			updatedAt: new Date(),
 		});
 
-		return NextResponse.json("User registered successfully", { status: 201 });
+		return NextResponse.json(
+			{ action: "register", message: "User registered successfully" },
+			{ status: 201 }
+		);
 	} catch (error) {
-		console.error("Login e error:", error);
+		console.error("Login error:", error);
 		return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
 	}
 }
